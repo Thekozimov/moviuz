@@ -16,25 +16,21 @@ app.use(cors());
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
-// ============ RAILWAY PERSISTENT VOLUME MUHIM! ============
-// Database path - Railway'da volume mount qilingan papkaga yoziladi
+// ============ RAILWAY PERSISTENT VOLUME ============
 let dbPath = './database.sqlite';
-if (process.env.RAILWAY_VOLUME_MOUNT_PATH) {
-    dbPath = path.join(process.env.RAILWAY_VOLUME_MOUNT_PATH, 'database.sqlite');
-    console.log(`🚂 Railway Volume detected: ${dbPath}`);
-} else if (process.env.RAILWAY_ENVIRONMENT) {
-    // Agar volume bo'lmasa, /app/data papkasiga yozishga harakat qilamiz
-    const dataDir = '/app/data';
-    if (!fs.existsSync(dataDir)) fs.mkdirSync(dataDir, { recursive: true });
+const dataDir = process.env.RAILWAY_VOLUME_MOUNT_PATH || (process.env.RAILWAY_ENVIRONMENT ? '/app/data' : null);
+
+if (dataDir) {
+    if (!fs.existsSync(dataDir)) {
+        fs.mkdirSync(dataDir, { recursive: true });
+    }
     dbPath = path.join(dataDir, 'database.sqlite');
-    console.log(`⚠️ Using /app/data for database: ${dbPath}`);
+    console.log(`✅ Database path: ${dbPath}`);
 } else {
-    console.log(`💻 Local development mode: ${dbPath}`);
+    console.log(`💻 Local mode: ${dbPath}`);
 }
 
-console.log(`✅ Database path: ${dbPath}`);
-
-// Upload papkalarini yaratish
+// Upload papkalari
 const uploadDir = path.join(__dirname, 'uploads');
 const postersDir = path.join(uploadDir, 'posters');
 const bannersDir = path.join(uploadDir, 'banners');
@@ -42,11 +38,10 @@ if (!fs.existsSync(uploadDir)) fs.mkdirSync(uploadDir, { recursive: true });
 if (!fs.existsSync(postersDir)) fs.mkdirSync(postersDir, { recursive: true });
 if (!fs.existsSync(bannersDir)) fs.mkdirSync(bannersDir, { recursive: true });
 
-// Static fayllar
 app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 app.use(express.static(path.join(__dirname, 'public')));
 
-// Multer konfiguratsiyasi
+// Multer
 const storage = multer.diskStorage({
     destination: (req, file, cb) => {
         if (file.fieldname === 'poster') cb(null, postersDir);
@@ -60,18 +55,18 @@ const storage = multer.diskStorage({
 });
 const upload = multer({ storage, limits: { fileSize: 10 * 1024 * 1024 } });
 
-// SQLite database ulanish
+// SQLite database
 const db = new sqlite3.Database(dbPath, (err) => {
     if (err) {
         console.error('❌ Database error:', err.message);
+        process.exit(1);
     } else {
-        console.log('✅ SQLite database connected successfully');
+        console.log('✅ SQLite connected:', dbPath);
     }
 });
 
-// Tables yaratish
+// Tables
 db.serialize(() => {
-    // Users table
     db.run(`CREATE TABLE IF NOT EXISTS users (
         id INTEGER PRIMARY KEY AUTOINCREMENT,
         name TEXT NOT NULL,
@@ -80,7 +75,6 @@ db.serialize(() => {
         created_at DATETIME DEFAULT CURRENT_TIMESTAMP
     )`);
 
-    // Dramas table
     db.run(`CREATE TABLE IF NOT EXISTS dramas (
         id INTEGER PRIMARY KEY AUTOINCREMENT,
         title TEXT NOT NULL,
@@ -98,7 +92,6 @@ db.serialize(() => {
         created_at DATETIME DEFAULT CURRENT_TIMESTAMP
     )`);
 
-    // Episodes table
     db.run(`CREATE TABLE IF NOT EXISTS episodes (
         id INTEGER PRIMARY KEY AUTOINCREMENT,
         drama_id INTEGER NOT NULL,
@@ -110,14 +103,13 @@ db.serialize(() => {
         FOREIGN KEY(drama_id) REFERENCES dramas(id) ON DELETE CASCADE
     )`);
 
-    // Admins table
     db.run(`CREATE TABLE IF NOT EXISTS admins (
         id INTEGER PRIMARY KEY AUTOINCREMENT,
         email TEXT UNIQUE NOT NULL,
         password TEXT NOT NULL
     )`);
 
-    // Default admin qo'shish
+    // Admin
     const adminEmail = 'olmasbekhamroyev673@gmail.com';
     const adminPass = 'khamrayev26';
     bcrypt.hash(adminPass, 10, (err, hash) => {
@@ -127,7 +119,7 @@ db.serialize(() => {
     });
 });
 
-// ============= AUTH MIDDLEWARE =============
+// Auth middleware
 function verifyUserToken(req, res, next) {
     const auth = req.headers.authorization;
     if (!auth || !auth.startsWith('Bearer ')) {
@@ -365,7 +357,6 @@ app.get('/api/dramas/:id', (req, res) => {
     db.get(`SELECT * FROM dramas WHERE id = ?`, [id], (err, drama) => {
         if (err || !drama) return res.status(404).json({ error: 'Drama topilmadi' });
         
-        // Ko'rishlar sonini oshirish
         db.run(`UPDATE dramas SET views = views + 1 WHERE id = ?`, [id]);
         
         db.all(`SELECT * FROM episodes WHERE drama_id = ? ORDER BY episode_num`, [id], (err, episodes) => {
@@ -382,8 +373,8 @@ app.get('*', (req, res) => {
 
 // ============= SERVER START =============
 app.listen(PORT, () => {
-    console.log(`🚀 Server running on http://localhost:${PORT}`);
+    console.log(`🚀 Server running on port ${PORT}`);
     console.log(`📧 Admin email: olmasbekhamroyev673@gmail.com`);
     console.log(`🔑 Admin parol: khamrayev26`);
-    console.log(`💾 Database path: ${dbPath}`);
+    console.log(`💾 Database: ${dbPath}`);
 });
