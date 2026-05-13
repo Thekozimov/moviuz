@@ -1,0 +1,764 @@
+<!DOCTYPE html>
+<html lang="uz">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=yes"/>
+<meta name="theme-color" content="#0a0812"/>
+<title>MOVI.UZ — K-Drama Platformasi</title>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Serif+KR:wght@300;400;600&family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet"/>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+:root{
+  --bg:#0a0812;--bg2:#110f1a;--bg3:#1a1726;
+  --cherry:#e8637a;--cherry2:#c94d65;
+  --gold:#f0c060;--text:#f0eaf5;--text2:#a89bb8;--text3:#6b6080;
+  --border:#2a2440;--card:#16131f;
+}
+body{font-family:'Poppins',sans-serif;background:var(--bg);color:var(--text);min-height:100vh;overflow-x:hidden}
+a{color:inherit;text-decoration:none}
+
+/* ── NAVBAR (Mobile First) ── */
+.navbar{position:fixed;top:0;left:0;right:0;z-index:200;height:56px;display:flex;align-items:center;justify-content:space-between;padding:0 1rem;background:rgba(10,8,18,0.96);backdrop-filter:blur(12px);border-bottom:1px solid rgba(232,99,122,0.1)}
+.logo{font-family:'Noto Serif KR',serif;font-size:1.3rem;font-weight:600;color:var(--cherry);letter-spacing:1px;cursor:pointer}
+.logo span{color:var(--text);font-size:.7rem}
+.nav-links{display:flex;gap:0.8rem}
+.nav-link{font-size:.7rem;font-weight:500;color:var(--text2);cursor:pointer;letter-spacing:.3px;text-transform:uppercase;transition:color .2s;padding:4px 0;border-bottom:2px solid transparent}
+.nav-link:hover,.nav-link.active{color:var(--cherry);border-bottom-color:var(--cherry)}
+.nav-right{display:flex;gap:.5rem;align-items:center}
+.btn-nav{background:transparent;border:1px solid var(--cherry);color:var(--cherry);padding:4px 12px;border-radius:20px;font-size:.7rem;cursor:pointer;font-family:'Poppins',sans-serif;font-weight:500;transition:all .2s}
+.btn-nav:hover{background:var(--cherry);color:#fff}
+.btn-nav.solid{background:var(--cherry);color:#fff}
+.user-badge{display:flex;align-items:center;gap:4px;font-size:.7rem;color:var(--text2)}
+.user-badge strong{color:var(--cherry)}
+
+/* ── PAGES ── */
+.page{display:none;min-height:100vh;padding-top:56px}
+.page.active{display:block}
+
+/* ── HERO (Mobile Responsive) ── */
+.hero{position:relative;height:auto;min-height:70vh;display:flex;align-items:center;overflow:hidden;background:linear-gradient(135deg,#0a0812,#1a0818 50%,#0d1020);padding:2rem 0}
+.hero-petals{position:absolute;inset:0;pointer-events:none;overflow:hidden}
+.petal{position:absolute;width:5px;height:13px;background:rgba(232,99,122,.18);border-radius:50% 50% 50% 50%/60% 60% 40% 40%;animation:fall linear infinite}
+@keyframes fall{0%{transform:translateY(-30px) rotate(0deg);opacity:0}10%{opacity:1}90%{opacity:.2}100%{transform:translateY(100vh) rotate(380deg);opacity:0}}
+.hero-content{position:relative;z-index:2;padding:0 1.2rem;max-width:100%}
+.hero-badge{display:inline-flex;align-items:center;gap:6px;background:rgba(232,99,122,.12);border:1px solid rgba(232,99,122,.3);color:var(--cherry);padding:3px 12px;border-radius:20px;font-size:.65rem;margin-bottom:1rem;font-weight:500}
+.hero-title{font-family:'Noto Serif KR',serif;font-size:1.8rem;font-weight:600;line-height:1.2;margin-bottom:0.8rem}
+@media (min-width: 768px){.hero-title{font-size:3.2rem}}
+.hero-title .accent{color:var(--cherry)}
+.hero-desc{color:var(--text2);font-size:.85rem;line-height:1.6;margin-bottom:1.5rem;max-width:100%}
+@media (min-width: 768px){.hero-desc{max-width:480px}}
+.hero-btns{display:flex;gap:0.8rem;flex-wrap:wrap}
+.btn-primary{background:linear-gradient(135deg,var(--cherry),var(--cherry2));color:#fff;border:none;padding:10px 22px;border-radius:25px;font-size:.85rem;cursor:pointer;font-family:'Poppins',sans-serif;font-weight:600;transition:all .25s;display:inline-flex;align-items:center;gap:8px}
+.btn-primary:hover{transform:translateY(-2px);box-shadow:0 10px 28px rgba(232,99,122,.4)}
+.btn-outline{background:transparent;border:1px solid rgba(255,255,255,.2);color:var(--text);padding:10px 22px;border-radius:25px;font-size:.85rem;cursor:pointer;font-family:'Poppins',sans-serif;font-weight:500;transition:all .2s}
+.btn-outline:hover{border-color:var(--cherry);color:var(--cherry)}
+.hero-stats{display:flex;gap:1.5rem;margin-top:1.8rem;flex-wrap:wrap}
+.stat-num{font-size:1.2rem;font-weight:700;color:var(--cherry)}
+.stat-label{font-size:.65rem;color:var(--text3);letter-spacing:.5px;margin-top:1px}
+.hero-mosaic{display:none}
+@media (min-width: 1024px){
+  .hero-side{position:absolute;right:0;top:0;bottom:0;width:50%;background:linear-gradient(90deg,var(--bg) 0%,transparent 35%);z-index:1}
+  .hero-mosaic{position:absolute;right:2rem;top:80px;bottom:60px;width:44%;display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;opacity:.55}
+  .mosaic-cell{border-radius:10px;background:var(--bg3);display:flex;align-items:center;justify-content:center;font-size:2.4rem}
+}
+
+/* ── SECTION ── */
+.section{padding:1.5rem 1rem}
+@media (min-width: 768px){.section{padding:2.5rem 3rem}}
+.section-hd{display:flex;justify-content:space-between;align-items:center;margin-bottom:1.2rem}
+.section-title{font-family:'Noto Serif KR',serif;font-size:1.1rem;font-weight:600;display:flex;align-items:center;gap:8px}
+@media (min-width: 768px){.section-title{font-size:1.3rem}}
+.section-title::before{content:'';display:inline-block;width:3px;height:16px;background:var(--cherry);border-radius:2px;flex-shrink:0}
+.see-all{font-size:.7rem;color:var(--cherry);cursor:pointer;font-weight:500}
+
+/* ── DRAMA CARD (Mobile Grid) ── */
+.drama-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:0.8rem}
+@media (min-width: 480px){.drama-grid{grid-template-columns:repeat(3,1fr)}}
+@media (min-width: 768px){.drama-grid{grid-template-columns:repeat(4,1fr)}}
+@media (min-width: 1024px){.drama-grid{grid-template-columns:repeat(5,1fr)}}
+@media (min-width: 1280px){.drama-grid{grid-template-columns:repeat(6,1fr)}}
+.drama-card{background:var(--card);border-radius:10px;overflow:hidden;cursor:pointer;transition:transform .22s,box-shadow .22s;border:1px solid var(--border);position:relative}
+.drama-card:hover{transform:translateY(-5px);box-shadow:0 14px 38px rgba(232,99,122,.22)}
+.poster-wrap{width:100%;aspect-ratio:2/3;position:relative;background:var(--bg3);display:flex;align-items:center;justify-content:center;font-size:2.5rem;overflow:hidden}
+.poster-wrap img{width:100%;height:100%;object-fit:cover;position:absolute;inset:0}
+.poster-hover{position:absolute;inset:0;background:rgba(10,8,18,.7);display:flex;align-items:center;justify-content:center;opacity:0;transition:opacity .2s}
+.drama-card:hover .poster-hover{opacity:1}
+.play-circle{width:40px;height:40px;background:var(--cherry);border-radius:50%;display:flex;align-items:center;justify-content:center;color:#fff;font-size:.9rem;padding-left:2px}
+.drama-info{padding:7px 9px}
+.drama-title{font-size:.7rem;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;margin-bottom:3px}
+@media (min-width: 768px){.drama-title{font-size:.8rem}}
+.drama-meta{display:flex;justify-content:space-between;font-size:.65rem}
+.drama-year{color:var(--text3)}
+.drama-rating{color:var(--gold)}
+.d-badge{position:absolute;top:6px;left:6px;background:rgba(232,99,122,.92);color:#fff;font-size:.55rem;padding:2px 7px;border-radius:8px;font-weight:700}
+.d-badge.new{background:rgba(56,180,74,.9)}
+.d-badge.top{background:rgba(240,192,96,.95);color:#3a2500}
+
+/* ── TOP10 ── */
+.top10-wrap{background:var(--bg2);border-radius:16px;padding:1rem;margin:0 1rem 2rem}
+@media (min-width: 768px){.top10-wrap{padding:1.5rem 2rem;margin:0 3rem 2.5rem}}
+.top10-item{display:flex;align-items:center;gap:12px;padding:8px 0;border-bottom:1px solid rgba(42,36,64,.5);cursor:pointer;transition:background .15s;border-radius:8px;padding-left:6px}
+.top10-item:last-child{border-bottom:none}
+.top10-item:hover{background:rgba(255,255,255,.03)}
+.top10-num{font-size:1.1rem;font-weight:700;width:28px;text-align:center;flex-shrink:0}
+.top10-emoji{font-size:1.3rem;flex-shrink:0}
+.top10-info{flex:1;min-width:0}
+.top10-name{font-size:.8rem;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.top10-sub{font-size:.65rem;color:var(--text3);margin-top:2px}
+.top10-rating{font-size:.75rem;color:var(--gold);font-weight:600;flex-shrink:0}
+
+/* ── CATALOG ── */
+.catalog-hd{padding:1rem 1rem 0.5rem;background:linear-gradient(180deg,var(--bg2),var(--bg))}
+@media (min-width: 768px){.catalog-hd{padding:2rem 3rem 1rem}}
+.catalog-hd h1{font-family:'Noto Serif KR',serif;font-size:1.5rem;margin-bottom:0.8rem}
+.search-bar{display:flex;align-items:center;gap:8px;background:var(--card);border:1px solid var(--border);border-radius:25px;padding:6px 14px;max-width:100%;transition:border-color .2s;margin-bottom:1rem}
+@media (min-width: 768px){.search-bar{max-width:380px}}
+.search-bar:focus-within{border-color:var(--cherry)}
+.search-bar input{background:none;border:none;outline:none;color:var(--text);font-size:.8rem;flex:1}
+.filters{display:flex;gap:.5rem;flex-wrap:wrap}
+.filter-btn{background:var(--card);border:1px solid var(--border);color:var(--text2);padding:4px 12px;border-radius:20px;font-size:.7rem;cursor:pointer;transition:all .2s}
+.filter-btn:hover,.filter-btn.active{background:var(--cherry);border-color:var(--cherry);color:#fff}
+
+/* ── DETAIL (Mobile) ── */
+.detail-hero-wrap{min-height:60vh;position:relative;display:flex;align-items:flex-end;overflow:hidden}
+.detail-backdrop-bg{position:absolute;inset:0;background:linear-gradient(135deg,#1a0818,#0a0812);display:flex;align-items:center;justify-content:center}
+.detail-backdrop-bg .big-emoji{font-size:6rem;opacity:.08}
+@media (min-width: 768px){.detail-backdrop-bg .big-emoji{font-size:12rem}}
+.detail-backdrop-bg img{width:100%;height:100%;object-fit:cover;opacity:.25}
+.detail-fade{position:absolute;inset:0;background:linear-gradient(0deg,var(--bg) 0%,rgba(10,8,18,.55) 55%,transparent 100%)}
+.detail-bottom{position:relative;z-index:2;padding:1rem;display:flex;flex-direction:column;gap:1rem;align-items:center}
+@media (min-width: 768px){.detail-bottom{padding:0 3rem 2rem;flex-direction:row;align-items:flex-end}}
+.detail-poster-box{width:120px;height:180px;border-radius:12px;background:var(--bg3);display:flex;align-items:center;justify-content:center;font-size:3rem;flex-shrink:0;border:2px solid rgba(232,99,122,.3);box-shadow:0 18px 55px rgba(0,0,0,.55);overflow:hidden}
+@media (min-width: 768px){.detail-poster-box{width:170px;height:255px;font-size:5rem}}
+.detail-poster-box img{width:100%;height:100%;object-fit:cover}
+.detail-meta-genre{color:var(--cherry);font-size:.65rem;font-weight:600;letter-spacing:1px;text-transform:uppercase;margin-bottom:.3rem}
+.detail-meta-title{font-family:'Noto Serif KR',serif;font-size:1.5rem;font-weight:600;line-height:1.2;margin-bottom:.2rem}
+@media (min-width: 768px){.detail-meta-title{font-size:2.6rem}}
+.detail-meta-kr{font-family:'Noto Serif KR',serif;font-size:.85rem;color:var(--text2);margin-bottom:.6rem}
+.detail-tags{display:flex;gap:.4rem;flex-wrap:wrap;margin-bottom:0.8rem}
+.tag{background:rgba(255,255,255,.06);border:1px solid var(--border);color:var(--text2);padding:2px 10px;border-radius:14px;font-size:.65rem}
+.detail-actions{display:flex;gap:.6rem;flex-wrap:wrap}
+.btn-watch{background:linear-gradient(135deg,var(--cherry),var(--cherry2));color:#fff;border:none;padding:9px 22px;border-radius:25px;font-size:.8rem;cursor:pointer;display:inline-flex;align-items:center;gap:7px}
+.btn-fav{background:transparent;border:1px solid rgba(255,255,255,.18);color:var(--text);padding:9px 18px;border-radius:25px;font-size:.8rem;cursor:pointer}
+.detail-body{padding:1rem}
+@media (min-width: 768px){.detail-body{padding:2rem 3rem 3rem}}
+.detail-desc{color:var(--text2);line-height:1.7;max-width:100%;font-size:.85rem;margin-bottom:1.5rem}
+.info-cards{display:grid;grid-template-columns:repeat(2,1fr);gap:.7rem;margin-bottom:1.5rem}
+@media (min-width: 480px){.info-cards{grid-template-columns:repeat(3,1fr)}}
+@media (min-width: 768px){.info-cards{grid-template-columns:repeat(5,1fr)}}
+.info-card{background:var(--card);border:1px solid var(--border);border-radius:10px;padding:.7rem;text-align:center}
+.info-card-label{font-size:.6rem;color:var(--text3);text-transform:uppercase;letter-spacing:.5px;margin-bottom:3px}
+.info-card-value{font-size:.8rem;font-weight:600}
+.ep-section-title{font-family:'Noto Serif KR',serif;font-size:1rem;font-weight:600;display:flex;align-items:center;gap:8px;margin-bottom:0.8rem}
+.ep-section-title::before{content:'';width:3px;height:14px;background:var(--cherry);border-radius:2px}
+.ep-list{display:grid;gap:6px}
+.ep-row{background:var(--card);border:1px solid var(--border);border-radius:9px;padding:8px 12px;display:flex;align-items:center;gap:10px;cursor:pointer}
+.ep-row:hover{border-color:var(--cherry)}
+.ep-row.playing{border-color:var(--cherry);background:rgba(232,99,122,.06)}
+.ep-num-box{width:30px;height:30px;background:rgba(232,99,122,.1);border:1px solid rgba(232,99,122,.25);border-radius:7px;display:flex;align-items:center;justify-content:center;font-size:.7rem;font-weight:700;color:var(--cherry);flex-shrink:0}
+.ep-title{font-size:.75rem;font-weight:500;flex:1}
+.ep-dur{font-size:.65rem;color:var(--text3);flex-shrink:0}
+.ep-play-icon{color:var(--cherry);font-size:.8rem;flex-shrink:0}
+
+/* ── VIDEO PLAYER (Mobile) ── */
+.player-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.95);z-index:500;flex-direction:column;align-items:center;justify-content:center;padding:0.5rem}
+.player-overlay.open{display:flex}
+.player-close{position:absolute;top:0.8rem;right:0.8rem;background:rgba(255,255,255,.1);border:none;color:#fff;width:36px;height:36px;border-radius:50%;font-size:1rem;cursor:pointer}
+.player-close:hover{background:var(--cherry)}
+.player-title-bar{color:var(--text2);font-size:.75rem;margin-bottom:.6rem;text-align:center;padding:0 2rem}
+.player-wrap{width:100vw;max-width:100%;background:#000;border-radius:10px;overflow:hidden;position:relative;aspect-ratio:16/9}
+@media (min-width: 768px){.player-wrap{width:90vw;max-width:1100px}}
+.player-wrap video,.player-wrap iframe{width:100%;height:100%;display:block;background:#000;border:none}
+.player-no-video{display:flex;flex-direction:column;align-items:center;justify-content:center;height:100%;color:var(--text3);gap:.6rem;font-size:.8rem}
+.player-ep-nav{display:flex;gap:.6rem;margin-top:0.8rem;flex-wrap:wrap;justify-content:center}
+.player-ep-btn{background:rgba(255,255,255,.07);border:1px solid var(--border);color:var(--text2);padding:5px 14px;border-radius:20px;font-size:.7rem;cursor:pointer}
+
+/* ── AUTH ── */
+.auth-wrap{display:flex;align-items:center;justify-content:center;min-height:calc(100vh - 56px);padding:1rem}
+.auth-card{background:var(--card);border:1px solid var(--border);border-radius:18px;padding:1.5rem;width:100%;max-width:400px}
+.auth-logo-txt{font-family:'Noto Serif KR',serif;font-size:1.6rem;color:var(--cherry);font-weight:600;text-align:center}
+.auth-sub{text-align:center;color:var(--text3);font-size:.7rem;margin-top:3px;margin-bottom:1.2rem}
+.auth-tabs{display:flex;background:var(--bg2);border-radius:9px;padding:3px;gap:3px;margin-bottom:1.2rem}
+.auth-tab{flex:1;padding:7px;border-radius:7px;font-size:.75rem;font-weight:500;cursor:pointer;border:none;background:transparent;color:var(--text2);text-align:center}
+.auth-tab.active{background:var(--cherry);color:#fff}
+.form-grp{margin-bottom:0.9rem}
+.form-lbl{font-size:.7rem;color:var(--text2);margin-bottom:4px;display:block}
+.form-inp{width:100%;background:var(--bg2);border:1px solid var(--border);border-radius:9px;padding:9px 12px;color:var(--text);font-size:.8rem;outline:none}
+.form-inp:focus{border-color:var(--cherry)}
+.btn-full{width:100%;background:linear-gradient(135deg,var(--cherry),var(--cherry2));color:#fff;border:none;padding:10px;border-radius:9px;font-size:.85rem;font-weight:600;cursor:pointer}
+.form-err{color:#ff6b7a;font-size:.7rem;margin-top:.4rem}
+.auth-foot{text-align:center;margin-top:1rem;font-size:.7rem;color:var(--text3)}
+.auth-foot span{color:var(--cherry);cursor:pointer}
+
+/* ── ADMIN (Mobile) ── */
+.admin-layout{display:flex;flex-direction:column;min-height:calc(100vh - 56px)}
+@media (min-width: 768px){.admin-layout{flex-direction:row}}
+.admin-sidebar{width:100%;background:var(--bg2);border-bottom:1px solid var(--border);padding:0.5rem 0;display:flex;flex-wrap:wrap;gap:0.2rem}
+@media (min-width: 768px){.admin-sidebar{width:220px;flex-direction:column;border-right:1px solid var(--border);border-bottom:none;padding:1rem 0}}
+.sidebar-logo{display:none}
+@media (min-width: 768px){.sidebar-logo{display:block;padding:0 1rem 1rem;border-bottom:1px solid var(--border);margin-bottom:.5rem}}
+.sidebar-logo-txt{font-family:'Noto Serif KR',serif;color:var(--cherry);font-size:1rem;font-weight:600}
+.sidebar-item{display:flex;align-items:center;gap:8px;padding:8px 1rem;color:var(--text2);font-size:.75rem;cursor:pointer;white-space:nowrap}
+@media (min-width: 768px){.sidebar-item{padding:10px 1.4rem;font-size:.8rem}}
+.sidebar-item:hover,.sidebar-item.active{color:var(--cherry);background:rgba(232,99,122,.07)}
+.admin-main{flex:1;padding:1rem;overflow-y:auto}
+.admin-page-title{font-family:'Noto Serif KR',serif;font-size:1.3rem;margin-bottom:1rem;display:flex;align-items:center;gap:.6rem;flex-wrap:wrap}
+.stats-row{display:grid;grid-template-columns:repeat(2,1fr);gap:.8rem;margin-bottom:1.5rem}
+@media (min-width: 640px){.stats-row{grid-template-columns:repeat(4,1fr)}}
+.stat-card{background:var(--card);border:1px solid var(--border);border-radius:11px;padding:0.8rem;display:flex;gap:.7rem;align-items:center}
+.stat-ico{width:36px;height:36px;border-radius:9px;display:flex;align-items:center;justify-content:center;font-size:1rem;flex-shrink:0}
+.stat-ico.r{background:rgba(232,99,122,.15)}
+.stat-ico.g{background:rgba(240,192,96,.15)}
+.stat-ico.b{background:rgba(76,175,80,.15)}
+.stat-ico.p{background:rgba(103,58,183,.15)}
+.stat-n{font-size:1.1rem;font-weight:700}
+.stat-l{font-size:.6rem;color:var(--text3);margin-top:1px}
+.tbl-wrap{background:var(--card);border:1px solid var(--border);border-radius:13px;overflow-x:auto}
+.tbl{width:100%;border-collapse:collapse;font-size:.7rem;min-width:500px}
+.tbl th,.tbl td{padding:8px 10px;text-align:left;border-bottom:1px solid rgba(42,36,64,.45);color:var(--text2)}
+.pill{padding:2px 8px;border-radius:9px;font-size:.6rem;font-weight:700}
+.pill-active{background:rgba(76,175,80,.14);color:#81c784}
+.pill-draft{background:rgba(255,193,7,.12);color:#ffd54f}
+.act-btn{width:26px;height:26px;border-radius:6px;display:inline-flex;align-items:center;justify-content:center;cursor:pointer;font-size:.75rem;border:1px solid var(--border);background:transparent}
+
+/* ── UPLOAD FORM (Mobile) ── */
+.upl-section{background:var(--card);border:1px solid var(--border);border-radius:13px;padding:1rem;margin-bottom:1rem}
+.form-row2{display:grid;grid-template-columns:1fr;gap:0.8rem}
+@media (min-width: 640px){.form-row2{grid-template-columns:1fr 1fr}}
+.adm-inp,.adm-sel,.adm-ta{width:100%;background:var(--bg2);border:1px solid var(--border);border-radius:8px;padding:8px 11px;color:var(--text);font-size:.8rem;outline:none}
+.drop-zone{border:2px dashed var(--border);border-radius:9px;padding:1rem;text-align:center;cursor:pointer;position:relative}
+.drop-zone:hover{border-color:var(--cherry);color:var(--cherry)}
+.drop-icon{font-size:1.5rem}
+.drop-txt{font-size:.75rem}
+.btn-add-ep{width:100%;background:transparent;border:1.5px dashed var(--border);border-radius:8px;padding:6px;color:var(--text3);font-size:.72rem;cursor:pointer}
+.ep-row-adm{display:flex;flex-direction:column;gap:6px;margin-bottom:8px;background:var(--bg2);border:1px solid var(--border);border-radius:8px;padding:8px}
+@media (min-width: 640px){.ep-row-adm{flex-direction:row;align-items:center;gap:8px;padding:8px 12px}}
+.btn-upl,.btn-ghost{padding:8px 18px;border-radius:9px;font-size:.75rem;cursor:pointer}
+.btns-row{display:flex;justify-content:flex-end;gap:.6rem;margin-top:.8rem}
+
+/* ── ADMIN LOGIN ── */
+.admin-login-wrap{display:flex;align-items:center;justify-content:center;min-height:calc(100vh - 56px);padding:1rem}
+.admin-login-card{background:var(--card);border:1px solid rgba(232,99,122,.25);border-radius:18px;padding:1.8rem;width:100%;max-width:380px}
+.adm-login-title{font-family:'Noto Serif KR',serif;color:var(--cherry);font-size:1.3rem;text-align:center}
+.adm-login-sub{color:var(--text3);font-size:.7rem;text-align:center;margin-bottom:1.5rem}
+
+/* ── TOAST & LOADING ── */
+.toast{position:fixed;bottom:1rem;left:50%;transform:translateX(-50%);background:var(--cherry);color:#fff;padding:8px 16px;border-radius:10px;font-size:.75rem;z-index:9999;opacity:0;transition:opacity .3s;pointer-events:none;white-space:nowrap}
+@media (min-width: 768px){.toast{bottom:2rem;right:2rem;left:auto;transform:none}}
+.toast.show{opacity:1}
+.loading-spin{display:inline-block;width:18px;height:18px;border:2px solid rgba(232,99,122,.3);border-top-color:var(--cherry);border-radius:50%;animation:spin .7s linear infinite}
+@keyframes spin{to{transform:rotate(360deg)}}
+.loading-screen{display:flex;align-items:center;justify-content:center;height:150px;color:var(--text2);gap:8px;font-size:.8rem}
+::-webkit-scrollbar{width:4px}
+::-webkit-scrollbar-track{background:var(--bg)}
+::-webkit-scrollbar-thumb{background:var(--border);border-radius:2px}
+</style>
+</head>
+<body>
+
+<!-- NAVBAR -->
+<nav class="navbar">
+  <div class="logo" onclick="goto('home')">MOVI<span>.UZ</span></div>
+  <div class="nav-links">
+    <span class="nav-link active" id="nl-home" onclick="goto('home');setNav('nl-home')">Bosh</span>
+    <span class="nav-link" id="nl-catalog" onclick="goto('catalog');setNav('nl-catalog')">Dramalar</span>
+    <span class="nav-link" id="nl-top" onclick="goto('top');setNav('nl-top')">Top 10</span>
+  </div>
+  <div class="nav-right" id="nav-right"></div>
+</nav>
+
+<!-- PAGE: HOME -->
+<div id="page-home" class="page active">
+  <div class="hero">
+    <div class="hero-petals" id="hero-petals"></div>
+    <div class="hero-content">
+      <div class="hero-badge">✨ Yangi mavsum qo'shildi</div>
+      <h1 class="hero-title">O'zbek tilida<br><span class="accent">K-Drama</span></h1>
+      <p class="hero-desc">MOVI.UZ — O'zbekiston uchun maxsus yaratilgan K-drama platformasi. HD sifat, o'zbek subtitri, bepul.</p>
+      <div class="hero-btns">
+        <button class="btn-primary" onclick="goto('catalog')">▶ Hozir ko'ring</button>
+        <button class="btn-outline" onclick="goto('catalog')">Katalog →</button>
+      </div>
+      <div class="hero-stats">
+        <div><div class="stat-num" id="hero-stat-dramas">—</div><div class="stat-label">K-DRAMA</div></div>
+        <div><div class="stat-num" id="hero-stat-users">—</div><div class="stat-label">TOMOSHABIN</div></div>
+        <div><div class="stat-num" id="hero-stat-views">—</div><div class="stat-label">KO'RISHLAR</div></div>
+      </div>
+    </div>
+    <div class="hero-side"></div>
+    <div class="hero-mosaic">
+      <div class="mosaic-cell" style="grid-row:span 2;background:#1f1030">🌸</div>
+      <div class="mosaic-cell" style="background:#0f1f30">🌙</div>
+      <div class="mosaic-cell" style="background:#301510">🔥</div>
+      <div class="mosaic-cell" style="background:#102010">🌿</div>
+      <div class="mosaic-cell" style="background:#1e0e28">💜</div>
+    </div>
+  </div>
+  <div class="section" style="background:linear-gradient(180deg,var(--bg2),var(--bg))">
+    <div class="section-hd">
+      <h2 class="section-title">Trendagi Dramalar</h2>
+      <span class="see-all" onclick="goto('catalog')">Hammasi →</span>
+    </div>
+    <div class="drama-grid" id="home-trending"><div class="loading-screen"><span class="loading-spin"></span></div></div>
+  </div>
+  <div class="section">
+    <div class="section-hd">
+      <h2 class="section-title">Eng Ko'p Ko'rilganlar</h2>
+      <span class="see-all" onclick="goto('catalog')">Hammasi →</span>
+    </div>
+    <div class="drama-grid" id="home-popular"><div class="loading-screen"><span class="loading-spin"></span></div></div>
+  </div>
+</div>
+
+<!-- PAGE: CATALOG -->
+<div id="page-catalog" class="page">
+  <div class="catalog-hd">
+    <h1>🎬 Dramalar Katalogi</h1>
+    <div class="search-bar">
+      <span style="font-size:.8rem">🔍</span>
+      <input type="text" placeholder="Drama nomi..." id="search-inp" oninput="onSearch()"/>
+    </div>
+    <div class="filters" id="filter-buttons">
+      <button class="filter-btn active" data-filter="all" onclick="setFilter(this,'all')">Barchasi</button>
+      <button class="filter-btn" data-filter="romance" onclick="setFilter(this,'romance')">Romantik</button>
+      <button class="filter-btn" data-filter="action" onclick="setFilter(this,'action')">Jangovar</button>
+      <button class="filter-btn" data-filter="thriller" onclick="setFilter(this,'thriller')">Triller</button>
+      <button class="filter-btn" data-filter="fantasy" onclick="setFilter(this,'fantasy')">Fantaziya</button>
+      <button class="filter-btn" data-filter="comedy" onclick="setFilter(this,'comedy')">Komediya</button>
+      <button class="filter-btn" data-filter="drama" onclick="setFilter(this,'drama')">Drama</button>
+    </div>
+  </div>
+  <div style="padding:1rem">
+    <div class="drama-grid" id="catalog-grid"><div class="loading-screen"><span class="loading-spin"></span></div></div>
+  </div>
+</div>
+
+<!-- PAGE: TOP10 -->
+<div id="page-top" class="page">
+  <div style="padding:1rem;background:linear-gradient(180deg,var(--bg2),var(--bg))">
+    <h1 style="font-family:'Noto Serif KR',serif;font-size:1.6rem;color:var(--gold)">⭐ O'zbekistonda Top 10</h1>
+    <p style="color:var(--text2);font-size:.75rem;margin-top:.3rem">Eng ko'p ko'rilgan dramatlar</p>
+  </div>
+  <div id="top10-list" class="top10-wrap" style="margin:1rem"></div>
+</div>
+
+<!-- PAGE: DETAIL -->
+<div id="page-detail" class="page"><div id="detail-content"></div></div>
+
+<!-- PAGE: LOGIN -->
+<div id="page-login" class="page">
+  <div class="auth-wrap">
+    <div class="auth-card">
+      <div class="auth-logo-txt">MOVI.UZ</div>
+      <div class="auth-sub">🌸 K-drama dunyosiga xush kelibsiz</div>
+      <div class="auth-tabs">
+        <button class="auth-tab active" onclick="authTab(this,'form-login')">Kirish</button>
+        <button class="auth-tab" onclick="authTab(this,'form-register')">Ro'yxat</button>
+      </div>
+      <div id="form-login">
+        <div class="form-grp"><label class="form-lbl">Email</label><input class="form-inp" id="l-email" type="email" placeholder="email@gmail.com"/></div>
+        <div class="form-grp"><label class="form-lbl">Parol</label><input class="form-inp" id="l-pass" type="password" placeholder="••••••••"/></div>
+        <div class="form-err" id="l-err"></div>
+        <button class="btn-full" onclick="doLogin()">Kirish</button>
+      </div>
+      <div id="form-register" style="display:none">
+        <div class="form-grp"><label class="form-lbl">Ism familiya</label><input class="form-inp" id="r-name" type="text" placeholder="To'liq ism"/></div>
+        <div class="form-grp"><label class="form-lbl">Email</label><input class="form-inp" id="r-email" type="email" placeholder="email@gmail.com"/></div>
+        <div class="form-grp"><label class="form-lbl">Parol</label><input class="form-inp" id="r-pass" type="password" placeholder="6+ belgi"/></div>
+        <div class="form-err" id="r-err"></div>
+        <button class="btn-full" onclick="doRegister()">Ro'yxatdan o'tish</button>
+      </div>
+      <div class="auth-foot">Ro'yxatdan o'tish orqali <span onclick="goto('home')">shartlar</span>ga rozilik bildirasiz</div>
+    </div>
+  </div>
+</div>
+
+<!-- PAGE: ADMIN LOGIN -->
+<div id="page-adminlogin" class="page">
+  <div class="admin-login-wrap">
+    <div class="admin-login-card">
+      <div class="adm-login-title">🔐 Admin Panel</div>
+      <div class="adm-login-sub">Faqat ruxsatli adminlar uchun</div>
+      <div class="form-grp"><label class="form-lbl">Email</label><input class="form-inp" id="al-email" type="email" placeholder="admin@gmail.com"/></div>
+      <div class="form-grp"><label class="form-lbl">Parol</label><input class="form-inp" id="al-pass" type="password" placeholder="••••••••"/></div>
+      <div class="form-err" id="al-err"></div>
+      <button class="btn-full" onclick="doAdminLogin()">Kirish</button>
+    </div>
+  </div>
+</div>
+
+<!-- PAGE: ADMIN -->
+<div id="page-admin" class="page">
+  <div class="admin-layout">
+    <aside class="admin-sidebar">
+      <div class="sidebar-logo"><div class="sidebar-logo-txt">MOVI.UZ</div><div class="sidebar-sub" style="font-size:.6rem;color:var(--text3)">Admin Panel</div></div>
+      <div class="sidebar-item active" id="sb-dashboard" onclick="adminSection('dashboard')"><span class="ico">📊</span> Statistika</div>
+      <div class="sidebar-item" id="sb-upload" onclick="adminSection('upload')"><span class="ico">📤</span> Yuklash</div>
+      <div class="sidebar-item" id="sb-dramas" onclick="adminSection('dramas')"><span class="ico">🎬</span> Dramalar</div>
+      <div class="sidebar-item" id="sb-users" onclick="adminSection('users')"><span class="ico">👥</span> Foydalanuvchilar</div>
+      <div class="sidebar-item" onclick="adminLogout()"><span class="ico">🚪</span> Chiqish</div>
+      <div class="sidebar-item" onclick="goto('home')"><span class="ico">🏠</span> Saytga</div>
+    </aside>
+    <main class="admin-main" id="admin-main-content"></main>
+  </div>
+</div>
+
+<!-- VIDEO PLAYER -->
+<div class="player-overlay" id="player-overlay">
+  <button class="player-close" onclick="closePlayer()">✕</button>
+  <div class="player-title-bar" id="player-title"></div>
+  <div class="player-wrap" id="player-wrap"></div>
+  <div class="player-ep-nav" id="player-ep-nav"></div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+// STATE
+let state = { dramas: [], currentDrama: null, currentEp: 0, adminToken: localStorage.getItem('adminToken'), userToken: localStorage.getItem('userToken'), userName: localStorage.getItem('userName'), filter: 'all', search: '', epCount: 1 };
+
+// UTILS
+function toast(msg, green = false) {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.className = 'toast' + (green ? ' green' : '');
+  setTimeout(() => t.classList.remove('show'), 10);
+  setTimeout(() => t.classList.add('show'), 10);
+  setTimeout(() => t.classList.remove('show'), 2800);
+}
+
+function setNav(id) {
+  document.querySelectorAll('.nav-link').forEach(l => l.classList.remove('active'));
+  const el = document.getElementById(id);
+  if (el) el.classList.add('active');
+}
+
+function authHeader() { return state.userToken ? { 'Authorization': 'Bearer ' + state.userToken, 'Content-Type': 'application/json' } : { 'Content-Type': 'application/json' }; }
+function adminHeader() { return { 'Authorization': 'Bearer ' + state.adminToken, 'Content-Type': 'application/json' }; }
+
+async function apiFetch(url, opts = {}) {
+  try {
+    const r = await fetch(url, opts);
+    const data = await r.json();
+    if (!r.ok) throw new Error(data.error || 'Xatolik');
+    return data;
+  } catch (e) { throw e; }
+}
+
+// NAVIGATION
+function goto(page) {
+  document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+  const el = document.getElementById('page-' + page);
+  if (el) { el.classList.add('active'); window.scrollTo(0, 0); }
+  if (page === 'home') { renderHome(); setNav('nl-home'); }
+  if (page === 'catalog') { renderCatalog(); setNav('nl-catalog'); }
+  if (page === 'top') { renderTop10(); setNav('nl-top'); }
+  if (page === 'admin') { if (!state.adminToken) goto('adminlogin'); else renderAdmin('dashboard'); }
+}
+
+function renderNavRight() {
+  const el = document.getElementById('nav-right');
+  if (state.adminToken) {
+    el.innerHTML = `<span class="user-badge">🔐 <strong>Admin</strong></span><button class="btn-nav" onclick="goto('admin')">Panel</button>`;
+  } else if (state.userToken) {
+    el.innerHTML = `<span class="user-badge">👤 <strong>${state.userName || 'User'}</strong></span><button class="btn-nav" onclick="doUserLogout()">Chiqish</button>`;
+  } else {
+    el.innerHTML = `<button class="btn-nav" onclick="goto('login')">Kirish</button><button class="btn-nav solid" onclick="goto('adminlogin')" style="background:rgba(232,99,122,.15)">Admin</button>`;
+  }
+}
+
+function cardHTML(d) {
+  const posterContent = d.poster ? `<img src="${d.poster}" alt="${d.title}"/>` : `<span style="font-size:2rem">${d.emoji || '🎬'}</span>`;
+  let badge = '';
+  if (d.badge === 'TOP') badge = `<div class="d-badge top">TOP</div>`;
+  else if (d.badge === 'NEW') badge = `<div class="d-badge new">YANGI</div>`;
+  return `<div class="drama-card" onclick="openDrama(${d.id})"><div class="poster-wrap">${posterContent}<div class="poster-hover"><div class="play-circle">▶</div></div>${badge}</div><div class="drama-info"><div class="drama-title">${d.title}</div><div class="drama-meta"><span class="drama-year">${d.year}</span><span class="drama-rating">★ ${d.rating || '—'}</span></div></div></div>`;
+}
+
+// HOME
+async function renderHome() {
+  makePetals();
+  try {
+    const dramas = await apiFetch('/api/dramas');
+    state.dramas = dramas;
+    const trending = [...dramas].sort((a, b) => b.views - a.views).slice(0, 6);
+    const popular = [...dramas].sort((a, b) => b.rating - a.rating).slice(0, 6);
+    document.getElementById('home-trending').innerHTML = trending.length ? trending.map(cardHTML).join('') : '<p style="color:var(--text3);padding:1rem">Hozircha drama yo\'q</p>';
+    document.getElementById('home-popular').innerHTML = popular.length ? popular.map(cardHTML).join('') : '<p style="color:var(--text3);padding:1rem">Hozircha drama yo\'q</p>';
+    document.getElementById('hero-stat-dramas').textContent = dramas.length + '+';
+    document.getElementById('hero-stat-views').textContent = dramas.reduce((s, d) => s + (d.views || 0), 0).toLocaleString();
+  } catch (e) { document.getElementById('home-trending').innerHTML = '<p style="color:var(--text3)">Server xatosi</p>'; }
+}
+
+// CATALOG
+async function renderCatalog() {
+  const grid = document.getElementById('catalog-grid');
+  grid.innerHTML = '<div class="loading-screen"><span class="loading-spin"></span></div>';
+  try {
+    let url = '/api/dramas?';
+    if (state.filter !== 'all') url += 'genre=' + state.filter + '&';
+    if (state.search) url += 'search=' + encodeURIComponent(state.search);
+    const dramas = await apiFetch(url);
+    grid.innerHTML = dramas.length ? dramas.map(cardHTML).join('') : '<p style="color:var(--text3);padding:2rem">Dramalar topilmadi</p>';
+  } catch (e) { grid.innerHTML = '<p style="color:var(--text3);padding:2rem">Yuklab bo\'lmadi</p>'; }
+}
+
+function setFilter(btn, val) {
+  document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  state.filter = val;
+  renderCatalog();
+}
+
+function onSearch() { state.search = document.getElementById('search-inp').value; clearTimeout(window._st); window._st = setTimeout(renderCatalog, 400); }
+
+// TOP10
+async function renderTop10() {
+  const el = document.getElementById('top10-list');
+  el.innerHTML = '<div class="loading-screen"><span class="loading-spin"></span></div>';
+  try {
+    const dramas = await apiFetch('/api/dramas');
+    const top = [...dramas].sort((a, b) => b.views - a.views).slice(0, 10);
+    el.innerHTML = top.map((d, i) => `<div class="top10-item" onclick="openDrama(${d.id})"><span class="top10-num" style="color:${i < 3 ? 'var(--gold)' : 'var(--text3)'}">${i + 1}</span><span class="top10-emoji">${d.emoji || '🎬'}</span><div class="top10-info"><div class="top10-name">${d.title}</div><div class="top10-sub">${d.year} • ${d._epCount || 0} qism • ${(d.views || 0).toLocaleString()}</div></div><span class="top10-rating">★ ${d.rating || '—'}</span></div>`).join('');
+  } catch (e) { el.innerHTML = '<p style="color:var(--text3);padding:1rem">Xatolik</p>'; }
+}
+
+// DETAIL
+async function openDrama(id) {
+  goto('detail');
+  document.getElementById('detail-content').innerHTML = '<div class="loading-screen"><span class="loading-spin"></span></div>';
+  try {
+    const d = await apiFetch('/api/dramas/' + id);
+    state.currentDrama = d;
+    const posterContent = d.poster ? `<img src="${d.poster}" alt="${d.title}"/>` : `<span style="font-size:3rem">${d.emoji || '🎬'}</span>`;
+    const bannerContent = d.banner ? `<img src="${d.banner}" alt=""/>` : `<span class="big-emoji">${d.emoji || '🎬'}</span>`;
+    const genreMap = { romance: 'Romantik', action: 'Jangovar', thriller: 'Triller', fantasy: 'Fantaziya', comedy: 'Komediya', drama: 'Drama' };
+    const eps = d.episodes || [];
+    document.getElementById('detail-content').innerHTML = `
+      <div class="detail-hero-wrap"><div class="detail-backdrop-bg">${bannerContent}</div><div class="detail-fade"></div>
+      <div class="detail-bottom"><div class="detail-poster-box">${posterContent}</div>
+      <div><div class="detail-meta-genre">${(genreMap[d.genre] || d.genre || '').toUpperCase()} • K-DRAMA</div>
+      <h1 class="detail-meta-title">${d.title}</h1>${d.titleKr ? `<div class="detail-meta-kr">${d.titleKr}</div>` : ''}
+      <div class="detail-tags"><span class="tag">${d.year}</span><span class="tag">★ ${d.rating || '—'}</span><span class="tag">${eps.length} qism</span><span class="tag">O'zbek subtitr</span><span class="tag">HD</span></div>
+      <div class="detail-actions"><button class="btn-watch" onclick="playEpisode(0)">▶ 1-qism</button><button class="btn-fav">♡ Saqlash</button></div></div></div></div>
+      <div class="detail-body"><p class="detail-desc">${d.description || ''}</p>
+      <div class="info-cards"><div class="info-card"><div class="info-card-label">Yil</div><div class="info-card-value">${d.year}</div></div>
+      <div class="info-card"><div class="info-card-label">Qismlar</div><div class="info-card-value">${eps.length}</div></div>
+      <div class="info-card"><div class="info-card-label">Reyting</div><div class="info-card-value">★ ${d.rating || '—'}</div></div>
+      <div class="info-card"><div class="info-card-label">Janr</div><div class="info-card-value">${genreMap[d.genre] || d.genre || '—'}</div></div>
+      <div class="info-card"><div class="info-card-label">Ko'rishlar</div><div class="info-card-value">${(d.views || 0).toLocaleString()}</div></div></div>
+      <div class="ep-section-title">📺 Qismlar</div><div class="ep-list">${eps.map((ep, i) => `<div class="ep-row" id="ep-row-${i}" onclick="playEpisode(${i})"><div class="ep-num-box">${ep.episode_num || i + 1}</div><div class="ep-title">${ep.title || `${ep.episode_num || i + 1}-qism`}</div><div class="ep-dur">${ep.duration || 60} min</div><span class="ep-play-icon">${ep.video_url ? '▶' : '—'}</span></div>`).join('')}</div></div>`;
+  } catch (e) { document.getElementById('detail-content').innerHTML = '<p style="color:var(--text3);padding:3rem 1rem">Drama topilmadi</p>'; }
+}
+
+// PLAYER
+function playEpisode(idx) {
+  const d = state.currentDrama;
+  if (!d) return;
+  const eps = d.episodes || [];
+  if (idx < 0 || idx >= eps.length) return;
+  state.currentEp = idx;
+  const ep = eps[idx];
+  const overlay = document.getElementById('player-overlay');
+  const wrap = document.getElementById('player-wrap');
+  document.getElementById('player-title').innerHTML = `<strong>${d.title}</strong> — ${ep.title || `${ep.episode_num || idx + 1}-qism`}`;
+  
+  const url = ep.video_url;
+  if (url && url.trim()) {
+    const isYoutube = url.includes('youtube.com') || url.includes('youtu.be');
+    const isGoogleDrive = url.includes('drive.google.com');
+    if (isYoutube) {
+      let ytId = url.split('v=')[1]?.split('&')[0] || url.split('youtu.be/')[1]?.split('?')[0];
+      wrap.innerHTML = `<iframe src="https://www.youtube.com/embed/${ytId}?autoplay=1" allowfullscreen allow="autoplay; fullscreen"></iframe>`;
+    } else if (isGoogleDrive) {
+      const fileId = url.match(/\/d\/([^/]+)/)?.[1] || url.match(/id=([^&]+)/)?.[1];
+      wrap.innerHTML = `<iframe src="https://drive.google.com/file/d/${fileId}/preview" allowfullscreen allow="autoplay; fullscreen"></iframe>`;
+    } else {
+      wrap.innerHTML = `<video controls autoplay controlsList="nodownload"><source src="${url}" type="video/mp4"/>Brauzer qo'llab-quvvatlamaydi</video>`;
+    }
+  } else {
+    wrap.innerHTML = `<div class="player-no-video"><div>🎬</div><div>Video hali mavjud emas</div></div>`;
+  }
+  
+  const nav = document.getElementById('player-ep-nav');
+  nav.innerHTML = `<button class="player-ep-btn" onclick="playEpisode(${idx - 1})" ${idx === 0 ? 'disabled' : ''}>← Oldingi</button><span style="font-size:.75rem;color:var(--text2);padding:0 .5rem">${idx + 1}/${eps.length}</span><button class="player-ep-btn" onclick="playEpisode(${idx + 1})" ${idx === eps.length - 1 ? 'disabled' : ''}>Keyingi →</button>`;
+  document.querySelectorAll('.ep-row').forEach(r => r.classList.remove('playing'));
+  const activeRow = document.getElementById('ep-row-' + idx);
+  if (activeRow) activeRow.classList.add('playing');
+  overlay.classList.add('open');
+  document.body.style.overflow = 'hidden';
+}
+
+function closePlayer() {
+  document.getElementById('player-overlay').classList.remove('open');
+  document.body.style.overflow = '';
+  document.getElementById('player-wrap').innerHTML = '';
+}
+document.getElementById('player-overlay').addEventListener('click', e => { if (e.target === document.getElementById('player-overlay')) closePlayer(); });
+
+// AUTH
+function authTab(btn, formId) {
+  document.querySelectorAll('.auth-tab').forEach(t => t.classList.remove('active'));
+  btn.classList.add('active');
+  document.getElementById('form-login').style.display = 'none';
+  document.getElementById('form-register').style.display = 'none';
+  document.getElementById(formId).style.display = 'block';
+}
+
+async function doLogin() {
+  const email = document.getElementById('l-email').value;
+  const password = document.getElementById('l-pass').value;
+  const err = document.getElementById('l-err');
+  if (!email || !password) { err.textContent = 'Barcha maydonlarni to\'ldiring'; return; }
+  try {
+    const data = await apiFetch('/api/login', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ email, password }) });
+    state.userToken = data.token; state.userName = data.name;
+    localStorage.setItem('userToken', data.token); localStorage.setItem('userName', data.name);
+    renderNavRight(); toast('Xush kelibsiz, ' + data.name + ' 🌸', true); goto('home');
+  } catch (e) { err.textContent = e.message; }
+}
+
+async function doRegister() {
+  const name = document.getElementById('r-name').value;
+  const email = document.getElementById('r-email').value;
+  const password = document.getElementById('r-pass').value;
+  const err = document.getElementById('r-err');
+  if (!name || !email || !password) { err.textContent = 'Barcha maydonlarni to\'ldiring'; return; }
+  if (password.length < 6) { err.textContent = 'Parol kamida 6 belgi'; return; }
+  try {
+    const data = await apiFetch('/api/register', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ name, email, password }) });
+    state.userToken = data.token; state.userName = data.name;
+    localStorage.setItem('userToken', data.token); localStorage.setItem('userName', data.name);
+    renderNavRight(); toast('Muvaffaqiyatli ro\'yxat! 🎉', true); goto('home');
+  } catch (e) { err.textContent = e.message; }
+}
+
+function doUserLogout() { state.userToken = null; state.userName = null; localStorage.removeItem('userToken'); localStorage.removeItem('userName'); renderNavRight(); toast('Chiqdingiz'); }
+
+// ADMIN
+async function doAdminLogin() {
+  const email = document.getElementById('al-email').value;
+  const password = document.getElementById('al-pass').value;
+  const err = document.getElementById('al-err');
+  if (!email || !password) { err.textContent = 'Barcha maydonlarni to\'ldiring'; return; }
+  try {
+    const data = await apiFetch('/api/admin/login', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ email, password }) });
+    state.adminToken = data.token;
+    localStorage.setItem('adminToken', data.token);
+    renderNavRight(); toast('Admin paneliga xush kelibsiz 🔐', true); goto('admin');
+  } catch (e) { err.textContent = e.message; }
+}
+
+function adminLogout() { state.adminToken = null; localStorage.removeItem('adminToken'); renderNavRight(); toast('Admin paneldan chiqdingiz'); goto('home'); }
+
+function adminSection(sec) {
+  document.querySelectorAll('.sidebar-item').forEach(i => i.classList.remove('active'));
+  const el = document.getElementById('sb-' + sec);
+  if (el) el.classList.add('active');
+  renderAdmin(sec);
+}
+
+// ADMIN RENDER (qisqartirilgan)
+async function renderAdmin(sec) {
+  if (!state.adminToken) { goto('adminlogin'); return; }
+  const main = document.getElementById('admin-main-content');
+  if (sec === 'dashboard') {
+    main.innerHTML = '<div class="loading-screen"><span class="loading-spin"></span></div>';
+    try {
+      const stats = await apiFetch('/api/admin/stats', { headers: adminHeader() });
+      main.innerHTML = `<h1 class="admin-page-title">📊 Statistika <span class="admin-badge">Admin</span></h1><div class="stats-row">
+        <div class="stat-card"><div class="stat-ico r">🎬</div><div><div class="stat-n">${stats.totalDramas}</div><div class="stat-l">Jami Drama</div></div></div>
+        <div class="stat-card"><div class="stat-ico g">✅</div><div><div class="stat-n">${stats.activeDramas}</div><div class="stat-l">Faol</div></div></div>
+        <div class="stat-card"><div class="stat-ico b">👥</div><div><div class="stat-n">${stats.totalUsers}</div><div class="stat-l">Foydalanuvchilar</div></div></div>
+        <div class="stat-card"><div class="stat-ico p">👁️</div><div><div class="stat-n">${stats.totalViews.toLocaleString()}</div><div class="stat-l">Ko'rishlar</div></div></div></div>
+        <div class="tbl-wrap"><div class="tbl-hd"><span class="tbl-hd-title">⭐ Eng ko'p ko'rilganlar</span></div><table class="tbl"><thead><tr><th>#</th><th>Nomi</th><th>Ko'rishlar</th><th>Reyting</th></tr></thead><tbody>${(stats.topDramas || []).map((d, i) => `<tr><td style="color:${i < 3 ? 'var(--gold)' : 'var(--text3)'}">${i + 1}</td><td>${d.title}</td><td>${(d.views || 0).toLocaleString()}</td><td style="color:var(--gold)">★ ${d.rating}</td></tr>`).join('')}</tbody></table></div>`;
+    } catch (e) { main.innerHTML = '<p>Xatolik</p>'; }
+  } else if (sec === 'dramas') {
+    main.innerHTML = '<div class="loading-screen"><span class="loading-spin"></span></div>';
+    try {
+      const dramas = await apiFetch('/api/admin/dramas', { headers: adminHeader() });
+      main.innerHTML = `<h1 class="admin-page-title">🎬 Dramalar <span class="admin-badge">Admin</span><button class="btn-upl" style="padding:5px 12px;font-size:.7rem" onclick="adminSection('upload')">+ Yangi</button></h1><div class="tbl-wrap"><table class="tbl"><thead><tr><th>Nomi</th><th>Yil</th><th>Reyting</th><th>Qism</th><th>Ko'rish</th><th>Holat</th><th>Amal</th></tr></thead><tbody>${dramas.map(d => `<tr><td>${d.title}</td><td>${d.year}</td><td>★ ${d.rating || '—'}</td><td>${(d.episodes || []).length}</td><td>${(d.views || 0).toLocaleString()}</td><td><span class="pill ${d.status === 'active' ? 'pill-active' : 'pill-draft'}">${d.status === 'active' ? 'Faol' : 'Qoralama'}</span></td><td><div style="display:flex;gap:5px"><div class="act-btn" onclick="deleteDrama(${d.id})">🗑️</div><div class="act-btn" onclick="toggleStatus(${d.id},'${d.status}')">${d.status === 'active' ? '⏸' : '▶'}</div></div></td></tr>`).join('')}</tbody></table></div>`;
+    } catch (e) { main.innerHTML = '<p>Xatolik</p>'; }
+  } else if (sec === 'users') {
+    try {
+      const users = await apiFetch('/api/admin/users', { headers: adminHeader() });
+      main.innerHTML = `<h1 class="admin-page-title">👥 Foydalanuvchilar <span class="admin-badge">Admin</span></h1><div class="tbl-wrap"><table class="tbl"><thead><tr><th>Ism</th><th>Email</th></tr></thead><tbody>${users.map(u => `<tr><td>${u.name || '—'}</td><td>${u.email}</td></tr>`).join('')}</tbody></table></div>`;
+    } catch (e) { main.innerHTML = '<p>Xatolik</p>'; }
+  } else if (sec === 'upload') {
+    main.innerHTML = `<h1 class="admin-page-title">📤 Kontent Yuklash</h1><div class="upl-section"><div class="form-row2"><div class="adm-grp"><label>Drama nomi*</label><input class="adm-inp" id="up-title" placeholder="My Love From The Star"/></div><div class="adm-grp"><label>Koreyscha nomi</label><input class="adm-inp" id="up-titlekr"/></div></div><div class="form-row2"><div class="adm-grp"><label>Janr*</label><select class="adm-sel" id="up-genre"><option value="romance">Romantik</option><option value="action">Jangovar</option><option value="thriller">Triller</option><option value="fantasy">Fantaziya</option><option value="comedy">Komediya</option><option value="drama">Drama</option></select></div><div class="adm-grp"><label>Yil*</label><input class="adm-inp" id="up-year" type="number" placeholder="2024"/></div></div><div class="form-row2"><div class="adm-grp"><label>Reyting</label><input class="adm-inp" id="up-rating" step="0.1" placeholder="8.5"/></div><div class="adm-grp"><label>Emoji</label><input class="adm-inp" id="up-emoji" placeholder="🌸" maxlength="4"/></div></div><div class="adm-grp"><label>Tavsif</label><textarea class="adm-ta" id="up-desc" rows="3"></textarea></div><div class="adm-grp"><label>Holat</label><select class="adm-sel" id="up-status"><option value="active">Faol</option><option value="draft">Qoralama</option></select></div></div>
+    <div class="upl-section"><div class="adm-grp"><label>Poster</label><div class="drop-zone"><input type="file" id="up-poster" accept="image/*"/><div class="drop-icon">🖼️</div><div class="drop-txt">Poster yuklash</div></div><div id="up-poster-name" style="font-size:.7rem;color:var(--cherry)"></div></div><div class="adm-grp"><label>Banner</label><div class="drop-zone"><input type="file" id="up-banner" accept="image/*"/><div class="drop-icon">🎞️</div><div class="drop-txt">Banner yuklash</div></div><div id="up-banner-name" style="font-size:.7rem;color:var(--cherry)"></div></div></div>
+    <div class="upl-section"><div class="upl-sec-title">📺 Qismlar</div><div id="ep-fields"></div><button class="btn-add-ep" onclick="addEpField()">+ Qism qo'shish</button></div>
+    <div class="btns-row"><button class="btn-ghost" onclick="adminSection('dramas')">Bekor</button><button class="btn-upl" onclick="submitDrama()">📤 Nashr etish</button></div>`;
+    document.getElementById('up-poster').addEventListener('change', e => { if (e.target.files[0]) document.getElementById('up-poster-name').innerHTML = '✓ ' + e.target.files[0].name; });
+    document.getElementById('up-banner').addEventListener('change', e => { if (e.target.files[0]) document.getElementById('up-banner-name').innerHTML = '✓ ' + e.target.files[0].name; });
+    renderEpFields();
+  }
+}
+
+function renderEpFields() {
+  const c = document.getElementById('ep-fields');
+  if (!c) return;
+  let html = '';
+  for (let i = 1; i <= state.epCount; i++) {
+    html += `<div class="ep-row-adm"><span>${i}-qism</span><input class="adm-ep-inp" id="ep-name-${i}" placeholder="Nomi"/><input class="adm-ep-inp" id="ep-url-${i}" placeholder="Video URL"/><input class="adm-ep-inp" id="ep-dur-${i}" type="number" placeholder="min" value="60" style="max-width:70px"/></div>`;
+  }
+  c.innerHTML = html;
+}
+
+function addEpField() { state.epCount++; renderEpFields(); }
+
+async function submitDrama() {
+  const fd = new FormData();
+  fd.append('title', document.getElementById('up-title').value);
+  fd.append('titleKr', document.getElementById('up-titlekr').value);
+  fd.append('genre', document.getElementById('up-genre').value);
+  fd.append('year', document.getElementById('up-year').value);
+  fd.append('rating', document.getElementById('up-rating').value || 0);
+  fd.append('emoji', document.getElementById('up-emoji').value || '🎬');
+  fd.append('description', document.getElementById('up-desc').value);
+  fd.append('status', document.getElementById('up-status').value);
+  fd.append('episodeCount', state.epCount);
+  for (let i = 1; i <= state.epCount; i++) {
+    fd.append(`ep_title_${i}`, document.getElementById('ep-name-' + i)?.value || `${i}-qism`);
+    fd.append(`ep_url_${i}`, document.getElementById('ep-url-' + i)?.value || '');
+    fd.append(`ep_dur_${i}`, document.getElementById('ep-dur-' + i)?.value || 60);
+  }
+  const poster = document.getElementById('up-poster')?.files?.[0];
+  const banner = document.getElementById('up-banner')?.files?.[0];
+  if (poster) fd.append('poster', poster);
+  if (banner) fd.append('banner', banner);
+  try {
+    const resp = await fetch('/api/admin/dramas', { method: 'POST', headers: { 'Authorization': 'Bearer ' + state.adminToken }, body: fd });
+    const data = await resp.json();
+    if (!resp.ok) throw new Error(data.error);
+    toast('Drama yuklandi! 🎬', true);
+    adminSection('dramas');
+  } catch (e) { toast('Xatolik: ' + e.message); }
+}
+
+async function deleteDrama(id) { if (!confirm('O\'chirilsinmi?')) return; try { await apiFetch('/api/admin/dramas/' + id, { method: 'DELETE', headers: adminHeader() }); toast('O\'chirildi', true); adminSection('dramas'); } catch (e) { toast('Xatolik'); } }
+async function toggleStatus(id, current) { const newStatus = current === 'active' ? 'draft' : 'active'; try { await apiFetch('/api/admin/dramas/' + id, { method: 'PUT', headers: adminHeader(), body: JSON.stringify({ status: newStatus }) }); toast(newStatus === 'active' ? 'Faollashtirildi' : 'Qoralama', true); adminSection('dramas'); } catch (e) { toast('Xatolik'); } }
+
+// PETALS
+function makePetals() {
+  const c = document.getElementById('hero-petals');
+  if (!c || c.children.length) return;
+  for (let i = 0; i < 18; i++) {
+    const p = document.createElement('div');
+    p.className = 'petal';
+    p.style.cssText = `left:${Math.random() * 100}%;animation-duration:${4 + Math.random() * 7}s;animation-delay:${Math.random() * 6}s;opacity:${0.08 + Math.random() * 0.25}`;
+    c.appendChild(p);
+  }
+}
+
+// INIT
+async function init() {
+  renderNavRight();
+  if (state.adminToken) { try { await apiFetch('/api/admin/verify', { headers: adminHeader() }); } catch { state.adminToken = null; localStorage.removeItem('adminToken'); renderNavRight(); } }
+  if (state.userToken) { /* verify */ }
+  renderHome();
+}
+init();
+</script>
+</body>
+</html>
